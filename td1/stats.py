@@ -7,6 +7,9 @@ pd.set_option('display.precision'   , 2)
 
 #read data from wines.csv into a pandas df
 data = pd.read_csv('csv/wines.csv', index_col = 0)
+print('\nData:')
+print(data)
+
 
 # stats per country
 print('\nCountries:')

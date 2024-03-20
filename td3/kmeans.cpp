@@ -7,7 +7,7 @@
 #include <fstream>
 #include <cstdio>	// for EOF
 #include <string>
-#include <algorithm>	// for count
+#include <algorithm>	// for count, min
 #include <vector>
 
 using std::rand;
@@ -27,8 +27,8 @@ class point
 			label = 0;
 		}
 
-		point(point &p){
-			this->coords = (double *)calloc(d, sizeof(double));
+		point(const point &p){
+			this->coords = (double *)calloc(d, sizeof(double));//to avoid double free
 			for(int i=0; i<d; i++){
 				this->coords[i] = p.coords[i];
 			}
@@ -55,12 +55,38 @@ class point
 			return dist;
 		}
 
-		point operator-(point q){
-			point aux;
-			for(int i=0; i<d; i++){
-				aux.coords[i] = this->coords[i] - q.coords[i];
+		point operator+(const point& q) const {
+			for(int i = 0; i < d; i++) {
+				this->coords[i] = this->coords[i] + q.coords[i];
 			}
-			return aux;
+			return *this;
+		}
+
+		point operator-(const point& q) const {
+			for(int i=0; i<d; i++){
+				this->coords[i] = this->coords[i] - q.coords[i];
+			}
+			return *this;
+		}
+
+		point operator/(double x) const{
+			for(int i=0; i<d; i++){
+				this->coords[i] = this->coords[i]/x;
+			}
+			return *this;
+		}
+
+		point& operator=(const point& p) {
+			if (this != &p) {
+
+				free(coords);//to avoid leak we free before copying
+
+				coords = (double *)calloc(d, sizeof(double));
+				for(int i = 0; i < d; i++) {
+					coords[i] = p.coords[i];
+				}
+			}
+			return *this;
 		}
 };
 
@@ -115,6 +141,14 @@ class cloud
 		points[n].label = label;
 
 		n++;
+	}
+
+	void update_label(int i, int label){
+		points[i].label = label;
+	}
+
+	void update_center(int i, point center){
+		centers[i] = center;
 	}
 
 	int get_d() const
@@ -182,7 +216,7 @@ class cloud
 
 			if(arg_min_j != p_i.label){//MUST CHANGE CLUSTER!!!
 				ret++;
-				p_i.label = arg_min_j;
+				update_label(i, arg_min_j);
 			}
 		}
 
@@ -191,21 +225,103 @@ class cloud
 
 	void set_centroid_centers()
 	{
+		int* count = (int *)calloc(k, sizeof(int));
+		point* temp_centers = (point *)calloc(k, sizeof(point));//temporary storage to calculate new centers
+
+		for(int i=0; i<k; i++){
+			temp_centers[i] = get_center(i);
+		}
+
+		for(int i=0; i<n; i++){
+			point p_i = get_point(i);
+
+			int c_i = p_i.label;
+			if(count[c_i] == 0){
+				temp_centers[c_i] = p_i;//reset center
+			}else{
+				temp_centers[c_i] = temp_centers[c_i] + p_i;
+			}
+			count[c_i]++;
+		}
+
+		for(int i=0; i<k; i++){
+
+			if(count[i] > 0)
+				temp_centers[i] = temp_centers[i]/count[i];//compute mean
+			
+			update_center(i, temp_centers[i]);//update actual center
+		}
+
+		free(count);
+		free(temp_centers);
 	}
 
 	void init_random_partition()
 	{
+		for(int i=0; i<n; i++){
+			update_label(i, rand()%k);
+		}
 	}
 
 	void lloyd()
 	{
+		init_random_partition();//start with random labels
+
+		do{//until centroids converge
+			set_centroid_centers();//update centers
+		}while(set_voronoi_labels() > 0);//update labels
 	}
 
 	void init_forgy()
 	{
+		int *chk = (int *)calloc(n, sizeof(int));
+		for(int i=0; i<n; i++)
+			chk[i] = i;
+
+		for(int i=0; i<k; i++){
+			int choice = std::rand()%(n-i);
+			update_center(i, get_point(chk[choice]));
+			std::swap(chk[n-i-1], chk[choice]);
+		}
+
+		free(chk);
 	}
 
 	void init_plusplus()
 	{
+		update_center(0, get_point(rand()%n));//c0 chosen uniformly at random
+
+		double *dists = (double *)calloc(n, sizeof(double));
+
+		for(int i=1; i<k; i++){//furthest point sampling
+			double sum_dist = 0;
+
+			for(int j=0; j<n; j++){
+
+				point p_j = get_point(j);
+
+				double min_dist = MAXFLOAT;
+
+				if(i == 1){
+					dists[j] = p_j.squared_dist(get_center(0));
+				}else{
+					dists[j] = std::min(dists[j], p_j.squared_dist(get_center(i-1)));
+				}
+				sum_dist += dists[j];
+			}
+
+			double rand = (double)std::rand() / RAND_MAX;
+			double aux = 0;
+			bool flag = true;
+			for(int j=0; j<n && flag; j++){
+				aux += dists[j]/sum_dist;
+				if(aux >= rand && flag){
+					update_center(i, get_point(j));
+					flag = false;
+				}
+			}
+		}
+
+		free(dists);
 	}
 };

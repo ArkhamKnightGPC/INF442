@@ -1,8 +1,8 @@
-# TD2: k-means
+# TD3: K-means
 
 ## Overview
 
-The goal of this TD(***travaux-dirigé***) is to implement the **k-means** algorithm for data classification using **Voronoi partitions** and **Lloyd's algorithm**.
+The goal of this TD(***travaux-dirigé***) is to implement the **k-means** algorithm for data classification using **Voronoi partitions** and **Lloyd's algorithm**. Three different initialization strategies where implemented: **random partition**, **forgy** and **k-means++**.
 
 The folder contains the following files:
 

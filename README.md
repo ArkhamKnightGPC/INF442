@@ -8,3 +8,4 @@ For each assignment a detailed ***README*** file is provided with instructions t
 
 - TD1: Basic statistics in C++
 - TD2: K-Dimensional Tree (kd-tree)
+- TD3: k-Means

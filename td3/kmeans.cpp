@@ -14,6 +14,58 @@ using std::rand;
 using std::srand;
 using std::time;
 
+class point
+{
+    public:
+
+        static int d;
+        double *coords;
+        int label; //partition function (indicates cluster point belongs to)
+
+		point(){
+			coords = (double *)calloc(d, sizeof(double));//allocate and initialize to 0
+			label = 0;
+		}
+
+		point(point &p){
+			this->coords = (double *)calloc(d, sizeof(double));
+			for(int i=0; i<d; i++){
+				this->coords[i] = p.coords[i];
+			}
+			this->label = p.label;
+		}
+
+		~point(){
+			free(coords);
+		}
+
+		void print() const{
+			for(int i=0; i<d; i++){
+				if(i>0)std::cout<<"\t";
+				std::cout << coords[i];
+			}
+			std::cout<<"\n";
+		}
+
+		double squared_dist(const point &q) const{
+			double dist = 0;
+			for(int i=0; i<d; i++){
+				dist += pow(this->coords[i] - q.coords[i], 2);
+			}
+			return dist;
+		}
+
+		point operator-(point q){
+			point aux;
+			for(int i=0; i<d; i++){
+				aux.coords[i] = this->coords[i] - q.coords[i];
+			}
+			return aux;
+		}
+};
+
+int point::d;
+
 
 class cloud
 {
@@ -80,12 +132,12 @@ class cloud
 		return k;
 	}
 
-	point &get_point(int i)
+	point &get_point(int i) const
 	{
 		return points[i];
 	}
 
-	point &get_center(int j)
+	point &get_center(int j) const
 	{
 		return centers[j];
 	}
@@ -98,13 +150,43 @@ class cloud
 
 	double intracluster_variance() const
 	{
-		return 0.0;
+		double ret = 0;
+		for(int i=0; i<n; i++){
+			point p_i = get_point(i);
+			point c_i = get_center(p_i.label);
+			ret += p_i.squared_dist(c_i);
+		}
+		ret = ret/n;
+		return ret;
 	}
 
 	int set_voronoi_labels()
 	{
+		int ret = 0;
 
-		return 0;
+		for(int i=0; i<n; i++){
+			point p_i = get_point(i);//we want to update label of p_i (check if it has to change cluster)
+
+			int j = 0;
+			int arg_min_j = p_i.label;//initial estimate for min
+			double min_dist = p_i.squared_dist(get_center(p_i.label));
+			do{
+				point c_i = get_center(j);
+				double dist = p_i.squared_dist(c_i);
+				if(dist < min_dist){
+					min_dist = dist;
+					arg_min_j = j;
+				}
+				j++;
+			}while(j < k);
+
+			if(arg_min_j != p_i.label){//MUST CHANGE CLUSTER!!!
+				ret++;
+				p_i.label = arg_min_j;
+			}
+		}
+
+		return ret;
 	}
 
 	void set_centroid_centers()

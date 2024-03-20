@@ -15,7 +15,7 @@ It also contains some subdirectories:
 - **csv** with the main dataset
 - **grading** with the test scripts
 - **gradinglib** with the test library
-- **quiz** with python code for initial analysis
+- **quiz** with a **Jupyter notebook** file for preliminary analysis, parameters can be modified to observe different plots.
 
 ## How to run the tests
 

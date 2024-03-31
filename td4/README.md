@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this TD(***travaux-dirigé***) is to implement different strategies for **hierarchical clustering** such as **single-linkage**, **complete-linkage**, **average-linkage** and **Ward's Criterion**. For visualisation of the clustering process, dendrograms were used.
+The goal of this TD(***travaux-dirigé***) is to implement an **agglomerative hierarchical clustering** algorithm based on **single-linkage** using the **union-find** data structure. For visualisation of the clustering process, dendrograms were used.
 
 For example, the dendrogram below was built using the **languages** dataset. This dataset includes several Germanic languages and contains [lexical distances](https://linguistics.stackexchange.com/questions/17400/worldwide-map-or-data-for-linguistic-distance) between them.
 

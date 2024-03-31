@@ -12,50 +12,49 @@
 /* graph -- method implementations */
 
 graph::graph(const cloud &_c) {
-    n = _c.get_n();
-    size = n * (n - 1) / 2;
+    n = (long)_c.get_n();
+    size = (n * (n - 1)) / 2;
 
     //allocate dynamic memory
     node_names = new std::string[n];
     edges = new edge[size];
 
+    int cnt = 0;
     for(int i=0; i<n; i++){
-        point pi = point();
-        pi = _c.get_point(i);
 
         //initialize node names from cloud
-        node_names[i] = std::string(pi.name);
+        node_names[i] = std::string(_c.get_point(i).name);
 
         for(int j=0; j<i; j++){
-            point pj = point();
-            pj = _c.get_point(j);
-            //add edge between pi and pj
-            double dist = pi.dist(pj);
-            edges[i + n*j] = edge(j, i, dist);
+            edges[cnt] = edge(j, i, _c.get_point(i).dist(_c.get_point(j)));
+            cnt++;
         }
     }
+
     //now we sort edges
-    std::sort(edges, edges+size, edge::compare);
+    std::sort(edges, edges+cnt, edge::compare);
 
     iterator_pos = 0;
 }
 
 graph::graph(long _n, const std::string _node_names[], double **dist_matrix) {
     n = _n;
-    size = n * (n - 1) / 2;
+    size = (n * (n - 1)) / 2;
     
     //allocate dynamic memory
     node_names = new std::string[n];
     edges = new edge[size];
 
+    int cnt = 0;
     for(int i=0; i<n; i++){
         node_names[i] = std::string(_node_names[i]);
         for(int j=0; j<i; j++){
-            edges[i + n*j] = edge(j, i, dist_matrix[i][j]);
+            edges[cnt] = edge(j, i, dist_matrix[i][j]);
+            cnt++;
         }
     }
     //now we sort edges
-    std::sort(edges, edges+size, edge::compare);
+    std::sort(edges, edges+cnt, edge::compare);
 
     iterator_pos = 0;
 
@@ -88,13 +87,13 @@ long graph::get_num_nodes() const {
 }
 
 void graph::start_iteration() {
-    // TODO: Exercise 3
+    iterator_pos = 0;
 }
 
 edge *graph::get_next() {
-    // TODO: Exercise 3
-
-    return NULL;
+    if(iterator_pos == size)
+        return NULL;
+    return &edges[iterator_pos++];
 }
 
 graph *graph::load_matrix(std::ifstream &is) {

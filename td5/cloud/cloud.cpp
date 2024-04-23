@@ -47,7 +47,7 @@ double cloud::k_dist_knn(const point& p, int k) const {
 		
 			bool flag = true;
 			for(int j=0; j<k; j++){
-				if(dist < neighbors_dist[j] || neighbors_dist[j] == -1)
+				if(dist < neighbors_dist[j])
 					std::swap(dist, neighbors_dist[j]);
 			}
 		}
@@ -55,11 +55,44 @@ double cloud::k_dist_knn(const point& p, int k) const {
 	return neighbors_dist[k-1];
 }
 
+point copy_point(const point& p) {
+	point cp = point();
+	int d = p.get_dim();
+	for(int m = 0; m < d; m++)
+		cp.coords[m] = p.coords[m];
+	cp.label = p.label;
+	return cp;
+}
+
 // TODO 2.2.2 if you wish to implement the Optional Exercise 3: return k nearest neighbors
 point* cloud::knn(const point& p, int k) const {
 	assert(k <= n);
 
+	double* neighbors_dist = new double[k];
 	point *neighbors = new point[k];
+	
+	//we use insertion sort
+	for(int i=0; i<n; i++){
+		double dist = p.dist(points[i]);
+
+		if(i < k){
+			neighbors_dist[i] = dist;
+			neighbors[i] = copy_point(points[i]);
+		}else{
+			if(i==k)
+				std::sort(neighbors_dist, neighbors_dist + k);
+
+			point aux = copy_point(points[i]);
+			bool flag = true;
+			for(int j=0; j<k; j++){
+				if(dist < neighbors_dist[j]){
+					std::swap(dist, neighbors_dist[j]);
+					std::swap(neighbors[j], aux);
+				}
+			}
+		}
+	}
+
 	return neighbors;
 }
 
@@ -67,6 +100,17 @@ point* cloud::knn(const point& p, int k) const {
 point* cloud::shift(int k)
 {
 	point* Q = new point[n];
+
+	int d = points[0].get_dim();
+
+	for(int i=0; i<n; i++){
+		point *neighbors = knn(points[i], k);
+		for(int j=0; j<k; j++){
+			for(int jj=0; jj<d; jj++){
+				Q[i].coords[jj] += neighbors[j].coords[jj]/k;
+			}
+		}
+	}
 
 	return Q;
 }

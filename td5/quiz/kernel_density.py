@@ -46,6 +46,13 @@ Examples
     # Kernel density estimation
     kde = KernelDensity(kernel=kernel, bandwidth=bandwidth).fit(data)
 
+    #input_data = np.array([[250, 850]])
+    #log_likelihood = kde.score_samples(input_data)
+    # Convert log likelihood to probability density
+    #probability_density = np.exp(log_likelihood)
+
+    #print(f"OLHA AQUI {probability_density}")
+
     # Plot the kernel
     if sys.argv[1] == "digits":
         # sample 100 new points from the data

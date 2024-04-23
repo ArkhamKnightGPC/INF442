@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this TD(***travaux-dirigé***) is to implement three different kernel density estimators (**flat**, **gaussian** and **k-nn** kernels) under a common class structure using inheritance. The **mean shifts** technique is used to improve the quality of the estimators.
+The goal of this TD(***travaux-dirigé***) is to implement three different kernel density estimators (**flat**, **gaussian** and **k-nn** kernels) under a common class structure using inheritance. The **mean shifts** clustering technique was also implemented and can be used to improve the quality of the estimators.
 
 The folder is structured into separate compilation units, each in a different sub-folder:
 

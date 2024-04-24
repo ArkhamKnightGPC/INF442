@@ -1,8 +1,8 @@
-# TD6: kNN for classification
+# TD7: kNN for regression
 
 ## Overview
 
-The goal of this TD(***travaux-dirigé***) is to implement the kNN classification algorithm.
+The goal of this TD(***travaux-dirigé***) is to 
 
 The folder is structured into separate compilation units, each in a different sub-folder:
 

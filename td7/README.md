@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this TD(***travaux-dirigé***) is to 
+The goal of this TD(***travaux-dirigé***) is to implement a linear regression algorithm as well as the kNN algorithm for regression.
 
 The folder is structured into separate compilation units, each in a different sub-folder:
 
@@ -10,15 +10,7 @@ The folder is structured into separate compilation units, each in a different su
 - **grading** with the test scripts
 - **gradinglib** with the test library
 - **quiz** with a python script used for preliminary analysis
-
-In the root, we have the files:
-- the file **Dataset.cpp** implements the dataset structure
-- the file **KnnClassification.cpp** uses the ANN library to implement kNN classification
-- the file **ConfusionMatrix.cpp** constructs the confusion matrix for prediction results along with key metrics
-- the file **main.cpp**, which calls upon the other test files
-- a **Makefile** that you can use to compile these tests
-
-It also contains some subdirectories:
+- **regression** containing the Regression abstract class and the implementation for each regressor.
 
 ## How to run the tests
 

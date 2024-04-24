@@ -18,8 +18,6 @@ In the root, we have the files:
 - the file **main.cpp**, which calls upon the other test files
 - a **Makefile** that you can use to compile these tests
 
-It also contains some subdirectories:
-
 ## How to run the tests
 
 Compile using the Makefile and then run **grader** executable generated.

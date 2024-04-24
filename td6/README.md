@@ -12,11 +12,9 @@ The folder is structured into separate compilation units, each in a different su
 - **quiz** with a python script used for preliminary analysis
 
 In the root, we have the files:
-- the file **Classification.cpp**,
-- the file **ConfusionMatrix.cpp**,
-- the file **Dataset.cpp**,
-- the file **KnnClassification.cpp**,
-- the file **RandomProjection.cpp**,
+- the file **Dataset.cpp** implements the dataset structure
+- the file **KnnClassification.cpp** uses the ANN library to implement kNN classification
+- the file **ConfusionMatrix.cpp** constructs the confusion matrix for prediction results along with key metrics
 - the file **main.cpp**, which calls upon the other test files
 - a **Makefile** that you can use to compile these tests
 

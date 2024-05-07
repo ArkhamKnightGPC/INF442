@@ -18,21 +18,44 @@ LinearRegression::~LinearRegression() {
 }
 
 Eigen::MatrixXd LinearRegression::construct_matrix() {
-	// TODO Exercise 1
+	int n = m_dataset->get_nbr_samples();
+    int dim = m_dataset->get_dim();
 
-	// replace this command with what you compute as a matrix X
-	return Eigen::MatrixXd(1, 1);
+	Eigen::MatrixXd X = Eigen::MatrixXd(n, dim);//we add column of 1s but also exclude m_col_regr
+
+    for(int i = 0; i < n; i++) {
+		X(i, 0) = 1;//first column, always 1
+        std::vector<double> row_i = m_dataset->get_instance(i);
+		int cur_index = 1;
+        for(int j = 0; j < dim; j++){
+			if(j == m_col_regr)//we ignore column m_col_regr
+				continue;
+            X(i, cur_index) = row_i[j];
+			cur_index++;//we use auxiliary index to keep track of next column
+        }
+    }
+
+	return X;
 }
 
 Eigen::VectorXd LinearRegression::construct_y() {
-	// TODO Exercise 1
+	int n = m_dataset->get_nbr_samples();
 
-	// replace this command with what you compute as a vector y.
-	return Eigen::VectorXd(1);
+	Eigen::VectorXd y = Eigen::VectorXd(n);
+
+	for(int i = 0; i < n; i++) {
+        std::vector<double> row_i = m_dataset->get_instance(i);
+		y(i) = row_i[m_col_regr];
+    }
+	return y;
 }
 
-void LinearRegression::set_coefficients() {
-	// TODO Exercise 2
+void LinearRegression::set_coefficients() {//constructor sets m_beta to null then calls this function
+	Eigen::MatrixXd X = LinearRegression::construct_matrix();
+	Eigen::VectorXd y = LinearRegression::construct_y();
+
+	Eigen::VectorXd beta = (X.transpose() * X).ldlt().solve(X.transpose() * y);
+    m_beta = new Eigen::VectorXd(beta);
 }
 
 const Eigen::VectorXd* LinearRegression::get_coefficients() const {
@@ -70,10 +93,38 @@ void LinearRegression::print_raw_coefficients() const {
 }
 
 void LinearRegression::sum_of_squares(Dataset* dataset, double& ess, double& rss, double& tss) const {
-	assert(dataset->get_dim()==m_dataset->get_dim());
-	// TODO Exercise 4
+	assert(dataset->get_dim() == m_dataset->get_dim());
+
+	int n = dataset->get_nbr_samples();
+	
+	LinearRegression aux = LinearRegression(dataset, m_col_regr);
+	Eigen::MatrixXd X = aux.construct_matrix();
+	Eigen::VectorXd y = aux.construct_y();
+
+	double avg = 0;
+	for(int i=0; i<n; i++)
+		avg += y(i);
+	avg = avg/n;
+
+	ess = 0;
+	rss = 0;
+	tss = 0;
+
+	for(int i=0; i < n; i++){
+		Eigen::VectorXd xi = X.transpose().col(i);
+		double est_i = estimate(xi);
+		tss += pow( y(i) - avg    	, 2);
+		ess += pow( est_i - avg		, 2);
+		rss += pow( est_i - y(i)	, 2);
+	}
+
 }
 
 double LinearRegression::estimate(const Eigen::VectorXd & x) const {
-	// TODO Exercise 3
+	int dim = m_dataset->get_dim();
+	double ans = (*m_beta)(0);
+	for(int i=1; i<dim; i++){
+		ans += (*m_beta)(i)*x(i-1);
+	}
+	return ans;
 }

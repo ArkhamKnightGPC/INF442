@@ -114,12 +114,12 @@ if __name__ == "__main__":
     # Questions 1 to 4: use the "salary" dataset
     # Questions 5 to 8: use the "maisons" dataset
     # Hint: see arguments to get_data
-    X_train, y_train, X_test, y_test = get_data()
+    X_train, y_train, X_test, y_test = get_data(file_prefix="maisons", target="price", norm=False)
 
     # Questions 1 to 4: use linear regression
     # Questions 5 to 8: use kNN regression
     # Hint: see arguments to fit_and_predict
-    regressor = LinearRegression()
-    # regressor = KNeighborsRegressor(...)
+    #regressor = LinearRegression()
+    regressor = KNeighborsRegressor(n_neighbors=1)
     y_pred = fit_and_predict(X_train, y_train, X_test, y_test, regressor)
     evaluate_performance(y_test, y_pred)

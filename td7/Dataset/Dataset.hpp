@@ -54,11 +54,11 @@ class Dataset {
         /**
           The dimension of the dataset.
         */
-		int m_dim;
+		    int m_dim;
         /**
           The number of instances / samples.
         */
-		int m_nsamples;
+		    int m_nsamples;
         /**
           The dataset is stored as a vector of double vectors.
         */

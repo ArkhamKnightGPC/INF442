@@ -30,6 +30,10 @@ The goal of this TD(***travaux-dirigé***) is to implement three different kerne
 
 The goal of this TD(***travaux-dirigé***) is to implement the kNN classification algorithm. We also built a Confusion matrix class to analyse key prediction metrics. The [Eigen](https://eigen.tuxfamily.org/) and [ANN](https://www.cs.umd.edu/users/mount/ANN/) C++ libraries are used for implementation.
 
-- TD6: kNN for regression
+- TD7: kNN for regression
 
 The goal of this TD(***travaux-dirigé***) is to implement a linear regression algorithm as well as the kNN algorithm for regression. The [Eigen](https://eigen.tuxfamily.org/) and [ANN](https://www.cs.umd.edu/users/mount/ANN/) C++ libraries are used for implementation.
+
+- TD8: Support Vector Machines
+
+The goal of this TD(***travaux-dirigé***) is to implement Soft Margin Kernel SVMs by solving the dual problem via a projected gradient ascent method.

@@ -344,17 +344,17 @@ int test_neuron_step(std::ostream &out, const std::string test_name)
     inputs[2]->set_signal(1000);
 
     // Uncomment the following lines to debug your implementation
-    // cout << "At neuron initialisation" << endl;
-    // cout << neuron << endl;
-    // cout << neuron2 << endl;
+    cout << "At neuron initialisation" << endl;
+    cout << neuron << endl;
+    cout << neuron2 << endl;
 
     neuron.step();
     neuron2.step();
 
     // Uncomment the following lines to debug your implementation
-    // cout << "After one step" << endl;
-    // cout << neuron << endl;
-    // cout << neuron2 << endl;
+    cout << "After one step" << endl;
+    cout << neuron << endl;
+    cout << neuron2 << endl;
     double n1s1 = neuron.get_axon()->get_signal();
     double n2s1 = neuron2.get_axon()->get_signal();
     double ci1s1 = neuron.get_collected_input();
@@ -364,9 +364,9 @@ int test_neuron_step(std::ostream &out, const std::string test_name)
     neuron2.step();
 
     // Uncomment the following lines to debug your implementation
-    // cout << "After two steps" << endl;
-    // cout << neuron << endl;
-    // cout << neuron2 << endl;
+    cout << "After two steps" << endl;
+    cout << neuron << endl;
+    cout << neuron2 << endl;
     double n1s2 = neuron.get_axon()->get_signal();
     double n2s2 = neuron2.get_axon()->get_signal();
     double ci1s2 = neuron.get_collected_input();

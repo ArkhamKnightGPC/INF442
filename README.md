@@ -37,3 +37,7 @@ The goal of this TD(***travaux-dirigé***) is to implement a linear regression a
 - TD8: Support Vector Machines
 
 The goal of this TD(***travaux-dirigé***) is to implement Soft Margin Kernel SVMs by solving the dual problem via a projected gradient ascent method.
+
+- TD9: Regression with a One-Layer Perceptron
+
+The goal of this TD(***travaux-dirigé***) is to implement a 1-layer perceptron. The perceptron will have one hidden layer of neurons and one additional neuron generating the output.

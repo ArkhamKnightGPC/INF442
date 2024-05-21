@@ -17,14 +17,26 @@ OneLayerPerceptron::OneLayerPerceptron(int _dim, int _size, double _rate, double
     // Recall:
     // dim - the dimension of the input (excluding already the regression column)
     // size - the number of neurons in the hidden layer of the perceptron
+    dim = _dim;
+    size = _size;
+    rate = _rate;
+    decay = _decay;
 
-    // TODO Exercise 3: Create nodes for the inputs
+    //Create nodes for the inputs
+    for(int i=0; i<dim; i++){
+        inputs[i] = new Node(0);
+    }
 
-    // TODO Exercise 3: Create neurons for the hidden layer connecting them to the inputs
-
-    // TODO Exercise 3: Create the output neuron connecting it to those of the hidden layer
+    //Create neurons for the hidden layer connecting them to the inputs
+    for(int i=0; i<size; i++){
+        hidden[i] = new Neuron(dim, inputs, _activation, _activation_der);
+    }
+    //Create the output neuron connecting it to those of the hidden layer
     // and using identity (x |--> x) as the activation function
-
+    std::function<double(double)> id = [](double x) { return x; };
+    std::function<double(double)> id_der = [](double x) { return 1.0; };
+    output = new Neuron(size, hidden, id, id_der);
+    
     init_learning_rate(_rate);
 }
 
@@ -35,10 +47,14 @@ OneLayerPerceptron::~OneLayerPerceptron()
     //  created in a constructor must be deleted here)
     for (auto node : inputs)
     {
-        // TODO Exercise 3
+        delete node;
     }
 
-    // TODO Exercise 3
+    for(auto it : hidden){
+        delete it;
+    }
+
+    delete output;
 }
 
  /*******************************\
@@ -123,7 +139,17 @@ void OneLayerPerceptron::prepare_inputs(Dataset *data, int row, int regr, bool p
     if (print)
         cout << "Initialising input signals...\t";
 
+    
+
     // TODO Exercise 4
+    int j = 0;
+    for(int i=0; i<dim+1; i++){
+        if(i==regr)continue;
+        double aux = data->get_instance(row)[i];
+        aux = normalize(aux, data, i);
+        inputs[j]->set_signal(aux);
+        j++;
+    }
 
     if (print)
         cout << "done." << endl;
@@ -137,6 +163,9 @@ void OneLayerPerceptron::compute_hidden_step(bool print)
         cout << "Running internal layer neurons..." << endl;
 
     // TODO Exercise 4: Compute one step of the hidden layer
+    for(int i=0; i<size; i++){
+        hidden[i]->step();
+    }
 
     if (print)
         cout << "done." << endl;
@@ -155,6 +184,7 @@ double OneLayerPerceptron::compute_output_step(Dataset *data, int row, int regr,
              << *output << endl;
 
     // TODO Exercise 4: Compute one step of the output neuron
+    output->step();
 
     if (print)
         cout << "done. Output = " << ret << endl;
@@ -163,8 +193,10 @@ double OneLayerPerceptron::compute_output_step(Dataset *data, int row, int regr,
         cout << "Setting up back propagation...\t";
 
     // Compute the error for back propagation
+    ret = output->get_output_signal();
     error = -2 * (normalize(data->get_instance(row)[regr], data, regr) - ret);
     // TODO Exercise 4: Initialise the back propagation
+    output->set_back_value(error);
 
     if (print)
     {
@@ -173,6 +205,7 @@ double OneLayerPerceptron::compute_output_step(Dataset *data, int row, int regr,
     }
 
     // TODO Exercise 4: Propagate back through the output neuron
+    output->step_back();
 
     if (print)
         cout << "done." << endl;
@@ -188,6 +221,9 @@ void OneLayerPerceptron::propagate_back_hidden(bool print)
         cout << "Running back propagation through the hidden layer...\t";
 
     // TODO Exercise 4: Propagate back through the hidden layer
+    for(int i=0; i<size;i ++){
+        hidden[i]->step_back();
+    }
 
     if (print)
         cout << "done." << endl;
